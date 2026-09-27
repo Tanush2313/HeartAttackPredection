@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HEART ATTACK ANALYSIS — Diagnostic & Analytics Platform</title>
+  <meta name="description" content="Academic Data Science Dashboard using Python, Scikit-Learn, and Flask for Heart Attack Prediction and Risk Analysis.">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <!-- Header / Navigation Bar -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+            <path d="M3.22 12H9.5l1.5-3 2 6 1.5-3h6.28"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="brand-title">HEART ATTACK <span class="gradient-text">ANALYSIS</span></h1>
+          <p class="brand-subtitle">Clinical Risk Diagnostic & Predictive Analytics Platform</p>
+        </div>
+      </div>
+      
+      <div class="header-badges">
+        <div class="badge badge-course">
+          <span class="dot-online"></span>
+          Data Science Using Python
+        </div>
+        <div class="badge badge-academic">
+          Syllabus Capstone Project
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs" id="nav-tabs">
+      <button class="nav-tab active" data-tab="tab-simulator">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M8 13h2"/><path d="M8 17h8"/><path d="M14 13h2"/></svg>
+        Patient Risk Simulator
+      </button>
+      <button class="nav-tab" data-tab="tab-models">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        Algorithm Benchmarks
+      </button>
+      <button class="nav-tab" data-tab="tab-eda">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+        Exploratory Data Analysis (EDA)
+      </button>
+    </nav>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-content">
+    
+    <!-- Top KPI Summary Cards -->
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-title">Benchmark Dataset</span>
+          <span class="kpi-icon icon-blue">📂</span>
+        </div>
+        <div class="kpi-value" id="kpi-dataset-records">303 Records</div>
+        <div class="kpi-meta">14 Clinical Features (UCI Cleveland)</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-title">Top Accuracy (Random Forest)</span>
+          <span class="kpi-icon icon-green">🎯</span>
+        </div>
+        <div class="kpi-value highlight-green" id="kpi-accuracy">88.52%</div>
+        <div class="kpi-meta">Stratified 80/20 Test Benchmark</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-title">Diagnostic Sensitivity (Recall)</span>
+          <span class="kpi-icon icon-cyan">🛡️</span>
+        </div>
+        <div class="kpi-value highlight-cyan" id="kpi-recall">92.86%</div>
+        <div class="kpi-meta">Crucial: Minimizes False Negatives</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-title">ROC-AUC Discrimination</span>
+          <span class="kpi-icon icon-purple">📈</span>
+        </div>
+        <div class="kpi-value highlight-purple" id="kpi-auc">95.89%</div>
+        <div class="kpi-meta">High Separability of Disease vs Healthy</div>
+      </div>
+    </section>
+
+    <!-- TAB 1: PATIENT RISK SIMULATOR -->
+    <section id="tab-simulator" class="tab-pane active">
+      <div class="simulator-layout">
+        
+        <!-- Controls Column -->
+        <div class="panel form-panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Clinical Parameter Inputs</h2>
+              <p class="panel-subtitle">Adjust sliders or choose a pre-configured profile to simulate diagnosis</p>
+            </div>
+            <!-- Preset Quick-Load Buttons -->
+            <div class="preset-buttons">
+              <button type="button" class="btn-preset btn-preset-healthy" id="btn-load-healthy">
+                🟢 Healthy Preset
+              </button>
+              <button type="button" class="btn-preset btn-preset-risk" id="btn-load-risk">
+                🔴 High-Risk Preset
+              </button>
+              <button type="button" class="btn-preset btn-preset-moderate" id="btn-load-moderate">
+                🟡 Moderate Preset
+              </button>
+            </div>
+          </div>
+
+          <form id="prediction-form" class="simulator-form">
+            <!-- Algorithm Selection -->
+            <div class="form-row model-picker-row">
+              <label for="input-model" class="field-label">Active Machine Learning Model:</label>
+              <select id="input-model" class="custom-select">
+                <option value="Random Forest" selected>Random Forest (Optimal: 88.52% Acc, 95.89% AUC)</option>
+                <option value="Logistic Regression">Logistic Regression (Linear Baseline: 86.89% Acc)</option>
+                <option value="K-Nearest Neighbors">K-Nearest Neighbors (KNN: 88.52% Acc, 100% Recall)</option>
+                <option value="Decision Tree">Decision Tree (Rule-Based: 78.69% Acc)</option>
+              </select>
+            </div>
+
+            <div class="form-grid">
+              <!-- Age -->
+              <div class="form-group">
+                <div class="field-header">
+                  <label for="input-age">Patient Age</label>
+                  <span class="slider-badge" id="val-age">54 yrs</span>
+                </div>
+                <input type="range" id="input-age" min="25" max="80" value="54" class="slider">
+              </div>
+
+              <!-- Sex -->
+              <div class="form-group">
+                <label>Biological Sex</label>
+                <div class="segmented-control">
+                  <button type="button" class="seg-btn active" data-val="1" id="btn-sex-male">Male</button>
+                  <button type="button" class="seg-btn" data-val="0" id="btn-sex-female">Female</button>
+                </div>
+                <input type="hidden" id="input-sex" value="1">
+              </div>
+
+              <!-- Chest Pain Type (cp) -->
+              <div class="form-group">
+                <label for="input-cp">Chest Pain Type</label>
+                <select id="input-cp" class="custom-select">
+                  <option value="1">1: Typical Angina</option>
+                  <option value="2">2: Atypical Angina</option>
+                  <option value="3" selected>3: Non-Anginal Pain</option>
+                  <option value="4">4: Asymptomatic</option>
+                </select>
+              </div>
+
+              <!-- Resting Blood Pressure (trestbps) -->
+              <div class="form-group">
+                <div class="field-header">
+                  <label for="input-trestbps">Resting BP (mm Hg)</label>
+                  <span class="slider-badge" id="val-trestbps">130 mmHg</span>
+                </div>
+                <input type="range" id="input-trestbps" min="90" max="200" value="130" class="slider">
+              </div>
+
+              <!-- Cholesterol (chol) -->
+              <div class="form-group">
+                <div class="field-header">
+                  <label for="input-chol">Serum Cholesterol</label>
+                  <span class="slider-badge" id="val-chol">240 mg/dL</span>
+                </div>
+                <input type="range" id="input-chol" min="120" max="450" value="240" class="slider">
+              </div>
+
+              <!-- Max Heart Rate (thalach) -->
+              <div class="form-group">
+                <div class="field-header">
+                  <label for="input-thalach">Max Heart Rate (thalach)</label>
+                  <span class="slider-badge" id="val-thalach">150 bpm</span>
+                </div>
+                <input type="range" id="input-thalach" min="70" max="210" value="150" class="slider">
+              </div>
+
+              <!-- ST Depression (oldpeak) -->
+              <div class="form-group">
+                <div class="field-header">
+                  <label for="input-oldpeak">ST Depression (oldpeak)</label>
+                  <span class="slider-badge" id="val-oldpeak">1.0</span>
+                </div>
+                <input type="range" id="input-oldpeak" min="0.0" max="6.0" step="0.1" value="1.0" class="slider">
+              </div>
+
+              <!-- Major Vessels Colored (ca) -->
+              <div class="form-group">
+                <div class="field-header">
+                  <label for="input-ca">Blocked Vessels (ca)</label>
+                  <span class="slider-badge" id="val-ca">0</span>
+                </div>
+                <input type="range" id="input-ca" min="0" max="3" step="1" value="0" class="slider">
+              </div>
+
+              <!-- Exercise Induced Angina (exang) -->
+              <div class="form-group">
+                <label>Exercise Induced Angina</label>
+                <div class="segmented-control">
+                  <button type="button" class="seg-btn" data-val="1" id="btn-exang-yes">Yes</button>
+                  <button type="button" class="seg-btn active" data-val="0" id="btn-exang-no">No</button>
+                </div>
+                <input type="hidden" id="input-exang" value="0">
+              </div>
+
+              <!-- Thalassemia (thal) -->
+              <div class="form-group">
+                <label for="input-thal">Thalassemia Defect</label>
+                <select id="input-thal" class="custom-select">
+                  <option value="3" selected>3: Normal Perfusion</option>
+                  <option value="6">6: Fixed Defect</option>
+                  <option value="7">7: Reversible Defect</option>
+                </select>
+              </div>
+
+              <!-- Slope of Peak ST -->
+              <div class="form-group">
+                <label for="input-slope">Peak ST Slope</label>
+                <select id="input-slope" class="custom-select">
+                  <option value="1" selected>1: Upsloping (Healthy)</option>
+                  <option value="2">2: Flat (Moderate)</option>
+                  <option value="3">3: Downsloping (Critical)</option>
+                </select>
+              </div>
+
+              <!-- Resting ECG -->
+              <div class="form-group">
+                <label for="input-restecg">Resting ECG</label>
+                <select id="input-restecg" class="custom-select">
+                  <option value="0" selected>0: Normal</option>
+                  <option value="1">1: ST-T Wave Abnormality</option>
+                  <option value="2">2: Left Ventricular Hypertrophy</option>
+                </select>
+              </div>
+
+              <!-- Fasting Blood Sugar -->
+              <div class="form-group">
+                <label>Fasting Blood Sugar > 120 mg/dL</label>
+                <div class="segmented-control">
+                  <button type="button" class="seg-btn" data-val="1" id="btn-fbs-yes">Yes</button>
+                  <button type="button" class="seg-btn active" data-val="0" id="btn-fbs-no">No</button>
+                </div>
+                <input type="hidden" id="input-fbs" value="0">
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" id="btn-run-prediction" class="btn-primary">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+                Execute Diagnostic Assessment
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Result / Output Column -->
+        <div class="panel result-panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Diagnostic Assessment Result</h2>
+            <span class="pulse-indicator">Live Inference</span>
+          </div>
+
+          <!-- Gauge and Risk Indicator -->
+          <div class="risk-card" id="risk-result-container">
+            <div class="risk-meter-wrapper">
+              <svg class="risk-meter" viewBox="0 0 200 120">
+                <path class="meter-bg" d="M 20 105 A 80 80 0 0 1 180 105" fill="none" stroke-width="18" stroke-linecap="round"/>
+                <path class="meter-fill" id="meter-fill" d="M 20 105 A 80 80 0 0 1 180 105" fill="none" stroke-width="18" stroke-linecap="round" stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
+              </svg>
+              <div class="meter-content">
+                <div class="risk-number" id="risk-percentage">0.0%</div>
+                <div class="risk-label">Estimated Risk</div>
+              </div>
+            </div>
+
+            <!-- Risk Status Badge -->
+            <div class="status-badge-container">
+              <span class="status-badge" id="risk-badge">Calculating...</span>
+            </div>
+
+            <!-- Clinical Advice Box -->
+            <div class="advice-box">
+              <div class="advice-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Physician Advisory:
+              </div>
+              <p class="advice-text" id="risk-advice">
+                Adjust clinical measurements or pick a preset patient above to generate a diagnostic recommendation.
+              </p>
+            </div>
+
+            <!-- Patient Vitals Summary -->
+            <div class="patient-vitals-strip" id="vitals-strip">
+              <div class="vital-item">
+                <span class="vital-name">Age / Sex</span>
+                <span class="vital-val" id="vital-age-sex">54 / Male</span>
+              </div>
+              <div class="vital-item">
+                <span class="vital-name">Resting BP</span>
+                <span class="vital-val" id="vital-bp">130 mmHg</span>
+              </div>
+              <div class="vital-item">
+                <span class="vital-name">Cholesterol</span>
+                <span class="vital-val" id="vital-chol">240 mg/dL</span>
+              </div>
+              <div class="vital-item">
+                <span class="vital-name">Max HR</span>
+                <span class="vital-val" id="vital-hr">150 bpm</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature Importance Mini Card -->
+          <div class="feature-importance-box">
+            <h3 class="box-title">Top 4 Diagnostic Decision Drivers:</h3>
+            <div id="feature-importance-list" class="fi-list">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 2: ALGORITHM BENCHMARKS -->
+    <section id="tab-models" class="tab-pane">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Supervised Learning Multi-Model Benchmark</h2>
+            <p class="panel-subtitle">Comparative evaluation of 4 core syllabus algorithms on an 80/20 stratified split</p>
+          </div>
+        </div>
+
+        <div class="models-grid" id="models-benchmark-container">
+          <!-- Dynamically populated model cards -->
+        </div>
+
+        <!-- Comparative Metrics Table -->
+        <div class="table-wrapper">
+          <table class="benchmark-table">
+            <thead>
+              <tr>
+                <th>Machine Learning Algorithm</th>
+                <th>Accuracy</th>
+                <th>Precision</th>
+                <th>Recall (Sensitivity)</th>
+                <th>F1-Score</th>
+                <th>ROC-AUC Score</th>
+                <th>Optimal Use Case</th>
+              </tr>
+            </thead>
+            <tbody id="benchmark-table-body">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Confusion Matrix Visualizer -->
+        <div class="cm-section">
+          <h3 class="section-heading">Detailed Confusion Matrices (Test Set: N = 61)</h3>
+          <div class="cm-grid" id="cm-grid-container">
+            <!-- Confusion Matrix cards -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: EXPLORATORY DATA ANALYSIS (EDA) GALLERY -->
+    <section id="tab-eda" class="tab-pane">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Exploratory Data Analysis (EDA) Visualizations</h2>
+            <p class="panel-subtitle">Publication-grade 300 DPI analytical charts generated directly by Python (Matplotlib & Seaborn)</p>
+          </div>
+        </div>
+
+        <div class="eda-gallery">
+          
+          <div class="chart-card">
+            <div class="chart-img-wrap">
+              <img src="/plots/01_target_distribution.png" alt="Target Distribution" class="gallery-img">
+            </div>
+            <div class="chart-desc">
+              <h4>1. Class Balance Verification</h4>
+              <p>Confirms balanced target distribution (54.1% Healthy, 45.9% Disease), proving stratified splitting is essential.</p>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-img-wrap">
+              <img src="/plots/02_age_vs_disease.png" alt="Age vs Disease Distribution" class="gallery-img">
+            </div>
+            <div class="chart-desc">
+              <h4>2. Age Distribution & Risk Density</h4>
+              <p>KDE curve reveals risk peaks between 55-65 years old, highlighting age as a primary physiological factor.</p>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-img-wrap">
+              <img src="/plots/03_correlation_heatmap.png" alt="Correlation Matrix Heatmap" class="gallery-img">
+            </div>
+            <div class="chart-desc">
+              <h4>3. Feature Correlation Heatmap</h4>
+              <p>Highlights strong correlations between disease and major blocked vessels (`ca`), ST depression (`oldpeak`), and thalassemia.</p>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-img-wrap">
+              <img src="/plots/04_chol_vs_bp.png" alt="Cholesterol vs Blood Pressure" class="gallery-img">
+            </div>
+            <div class="chart-desc">
+              <h4>4. Cholesterol vs Blood Pressure</h4>
+              <p>Bi-variate scatter displaying normal clinical boundaries (<120 mmHg BP, <200 mg/dL Chol) against positive diagnoses.</p>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-img-wrap">
+              <img src="/plots/05_heart_rate_vs_age.png" alt="Max Heart Rate vs Age" class="gallery-img">
+            </div>
+            <div class="chart-desc">
+              <h4>5. Maximum Heart Rate (`thalach`) vs Age</h4>
+              <p>Patients with cardiovascular compromise exhibit significantly lower peak exercise heart rate capacity.</p>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-img-wrap">
+              <img src="/plots/08_feature_importance.png" alt="Feature Importance" class="gallery-img">
+            </div>
+            <div class="chart-desc">
+              <h4>6. Random Forest Feature Importance</h4>
+              <p>Quantifies relative weight: blocked vessels (`ca`), ST depression (`oldpeak`), and perfusion (`thal`) dominate predictions.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+
+  </main>
+
+  <!-- Image Modal / Lightbox -->
+  <div id="image-modal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close" id="modal-close">&times;</span>
+      <img id="modal-img" src="" alt="Enlarged Chart">
+      <div id="modal-caption" class="modal-caption"></div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
